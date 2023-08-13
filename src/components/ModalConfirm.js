@@ -1,15 +1,26 @@
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { postApiUser } from "../services/userService"
+import { postApiUser, deleteUser } from "../services/userService"
 import { toast } from 'react-toastify';
+
 function ModalConfirm(props) {
-    const { show, handleClose, handleDeleteUser, dataUserDelete } = props
+    const { show, handleClose, dataUserDelete, handleDeleteUserFromModal } = props
     const [name, setName] = useState("")
     const [job, setJob] = useState("")
 
-    const handleConfirm = () => {
+    const confirmDelete = async () => {
+        let res = await deleteUser(dataUserDelete.id)
 
+        if (res && res.statusCode == 204) {
+            toast.success("Delete user  success")
+            handleClose()
+            handleDeleteUserFromModal(dataUserDelete)
+        }
+        else {
+            toast.error("Delete user error")
+        }
+        console.log("check res delete", res)
     }
     return (
         <div
@@ -26,22 +37,25 @@ function ModalConfirm(props) {
                 </Modal.Header>
                 <Modal.Body>
                     <div className='body-add-new'>
-                        Bạn có muốn xóa không
 
-                        Do want to delete this user ,
-                        email ={dataUserDelete.email}
+                        <h3>
+                            This action can't be undone
+                        </h3>
+                        <br />
+                        Do want to delete this user
+                        <b> email ={dataUserDelete.email}</b>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" className='btn btn-danger' onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={() => handleConfirm()}>
+                    <Button variant="primary" onClick={() => confirmDelete()}>
                         Confirm
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </div>
+        </div >
     );
 }
 

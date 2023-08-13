@@ -11,7 +11,7 @@ function ModalAddUser(props) {
     const handleSave = async () => {
         let res = await postApiUser(name, job)
 
-        console.log(">> check res:", res)
+        console.log(">> check res:", "name =", name, "job =", job)
         if (res && res.id) {
             handleClose()
             setName('')
@@ -61,7 +61,7 @@ function ModalAddUser(props) {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" className='btn btn-danger' onClick={handleClose}>
                         Close
                     </Button>
                     <Button variant="primary" onClick={() => handleSave()}>

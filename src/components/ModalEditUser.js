@@ -4,9 +4,10 @@ import Modal from 'react-bootstrap/Modal';
 import { putUpdateUser } from "../services/userService"
 import { toast } from 'react-toastify';
 function ModalEditUser(props) {
-    const { show, handleClose, dataUser, handleEditUserFromModal } = props
+    const { show, handleClose, dataUserEdit, handleEditUserFromModal } = props
     const [name, setName] = useState("")
     const [job, setJob] = useState("")
+    const [email, setEmail] = useState("")
 
 
     const handleEditUsers = async () => {
@@ -14,7 +15,7 @@ function ModalEditUser(props) {
         if (res && res.updatedAt) {
             handleEditUserFromModal({
                 first_name: name,
-                id: dataUser.id
+                id: dataUserEdit.id
             })
             handleClose()
             toast.success("Update user success")
@@ -23,9 +24,10 @@ function ModalEditUser(props) {
 
     useEffect(() => {
         if (show) {
-            setName(dataUser.first_name)
+            setName(dataUserEdit.first_name)
+
         }
-    }, [dataUser])
+    }, [dataUserEdit])
 
     return (
         <div
