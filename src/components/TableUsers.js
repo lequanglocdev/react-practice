@@ -7,6 +7,9 @@ import ModalEditUser from "./ModalEditUser";
 import ModalConfirm from "./ModalConfirm";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import _, { set } from "lodash"
+import "./TableUsers.scss"
+import { debounce } from "lodash"
+import { CSVLink, CSVDownload } from "react-csv";
 const TableUsers = (props) => {
     // goi danh sach User
     const [listUsers, setListUsers] = useState([]);
@@ -25,8 +28,10 @@ const TableUsers = (props) => {
     const [showDeleteUser, setShowDeleteUser] = useState(false)
     //
     const [dataUserDelete, setDataUserDelete] = useState({})
-
-
+    //
+    const [sortBy, setSortBy] = useState("asc")
+    const [sortField, setSortField] = useState("id")
+    const [dataExport, setDataExport] = useState([])
     const handleClose = () => {
         setShowAddModal(false)
         setShowEditModal(false)
@@ -81,24 +86,109 @@ const TableUsers = (props) => {
         setListUsers(cloneListUser)
 
     }
+    const handleSort = (sortBy, sortField) => {
+        setSortBy(sortBy)
+        setSortField(sortField)
+        let cloneListUser = _.cloneDeep(listUsers)
+        cloneListUser = _.orderBy(cloneListUser, [sortField], [sortBy])
+        setListUsers(cloneListUser)
+    }
+    const handleInput = debounce((event) => {
+        console.log(event.target.value)
+        let term = event.target.value
+        if (term) {
+            let cloneListUser = _.cloneDeep(listUsers)
+            cloneListUser = cloneListUser.filter(item => item.email.includes(term))
+            setListUsers(cloneListUser)
+        } else {
+            getAllUser(1)
+        }
+    }, 500)
+
+    const csvData = [
+        ["firstname", "lastname", "email"],
+        ["Ahmed", "Tomi", "ah@smthing.co.com"],
+        ["Raed", "Labes", "rl@smthing.co.com"],
+        ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+    ];
+    const getUserExport = (event, done) => {
+        let result = [];
+        if (listUsers && listUsers.length > 0) {
+            result.push(["Id", "Email", "First name", "Last name"])
+            listUsers.map((item, index) => {
+                let arr = [];
+                arr[0] = item.id;
+                arr[1] = item.email;
+                arr[2] = item.first_name;
+                arr[3] = item.last_name;
+                result.push(arr)
+            })
+            setDataExport(result)
+            done()
+        }
+    }
     return (
 
         <>
             <div className='my-3 add-new'>
                 <span ><h3>List Users</h3></span>
-                <button className='btn btn-success'
-                    onClick={() => setShowAddModal(true)}
+                <div className="group-btns">
 
-                >Add new user</button>
+                    <label htmlFor="test" className="btn btn-warning " >
+                        <i class="fa-solid fa-file-import text-white  "></i>Import
+                    </label>
+                    <input id="test" type="file" hidden />
+                    <CSVLink
+                        data={dataExport}
+                        filename={"users.csv"}
+                        className="btn btn-primary"
+                        asyncOnClick={true}
+                        onClick={getUserExport}
+                    >
+                        <i class="fa-solid fa-file-arrow-down "></i>Export
+                    </CSVLink>
+                </div>
+
+            </div>
+            <div className="col-4 my-3">
+                <input
+                    className='form-control'
+                    placeholder="Search"
+                    onChange={(event) => handleInput(event)}
+                />
             </div>
             <Table striped bordered hover>
-                <thead>
+                <thead >
                     <tr>
-                        <th>Id
-                            <i className="fas fa-heart"></i>;
+                        <th className="sort-header">Id
+                            <span >
+                                <i class="fa-solid fa-arrow-down-long"
+
+                                    onClick={() => handleSort('desc', "id")}
+                                >
+
+                                </i>
+                                <i class="fa-solid fa-arrow-up-long"
+                                    onClick={() => handleSort('asc', "id")}
+
+                                ></i>
+                            </span>
                         </th>
-                        <th>Email</th>
-                        <th>First Name</th>
+                        <th>Email </th>
+                        <th className="sort-header">First Name
+                            <span>
+                                <i class="fa-solid fa-arrow-down-long"
+
+                                    onClick={() => handleSort('desc', "first_name")}
+                                >
+
+                                </i>
+                                <i class="fa-solid fa-arrow-up-long"
+                                    onClick={() => handleSort('asc', "first_name")}
+
+                                ></i>
+                            </span>
+                        </th>
                         <th>Last Name</th>
                         <th>Action</th>
                     </tr>
@@ -115,16 +205,23 @@ const TableUsers = (props) => {
                                     <td>{item.email}</td>
                                     <td>{item.first_name}</td>
                                     <td>{item.last_name}</td>
-                                    <td> <button
-                                        className="btn btn-warning mx-3"
-                                        onClick={() => handleEditUsers(item)}
-                                    >Edit
-                                    </button>
+                                    <td>
+                                        <button
+                                            className='btn btn-success'
+                                            onClick={() => setShowAddModal(true)}
+                                        ><i className="fa-solid fa-circle-plus mx-1"></i>Add
+                                        </button>
+
+                                        <button
+                                            className="btn btn-warning mx-3"
+                                            onClick={() => handleEditUsers(item)}
+                                        ><i className="fa-solid fa-pen mx-1 text-white"></i>Edit
+                                        </button>
 
                                         <button
                                             className="btn btn-danger"
                                             onClick={() => handleDeleteUser(item)}
-                                        >Delete</button>
+                                        ><i className="fa-solid fa-trash mx-1"></i>Delete</button>
                                     </td>
                                 </tr>
                             )
