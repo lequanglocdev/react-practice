@@ -10,6 +10,9 @@ import _, { set } from "lodash"
 import "./TableUsers.scss"
 import { debounce } from "lodash"
 import { CSVLink, CSVDownload } from "react-csv";
+import Papa from "papaparse";
+import { toast } from 'react-toastify';
+
 const TableUsers = (props) => {
     // goi danh sach User
     const [listUsers, setListUsers] = useState([]);
@@ -31,6 +34,7 @@ const TableUsers = (props) => {
     //
     const [sortBy, setSortBy] = useState("asc")
     const [sortField, setSortField] = useState("id")
+
     const [dataExport, setDataExport] = useState([])
     const handleClose = () => {
         setShowAddModal(false)
@@ -105,28 +109,69 @@ const TableUsers = (props) => {
         }
     }, 500)
 
-    const csvData = [
-        ["firstname", "lastname", "email"],
-        ["Ahmed", "Tomi", "ah@smthing.co.com"],
-        ["Raed", "Labes", "rl@smthing.co.com"],
-        ["Yezzi", "Min l3b", "ymin@cocococo.com"]
-    ];
+
     const getUserExport = (event, done) => {
         let result = [];
         if (listUsers && listUsers.length > 0) {
-            result.push(["Id", "Email", "First name", "Last name"])
+            result.push(["Id", "Email", "First name", "Last name"]);
             listUsers.map((item, index) => {
                 let arr = [];
                 arr[0] = item.id;
                 arr[1] = item.email;
                 arr[2] = item.first_name;
                 arr[3] = item.last_name;
-                result.push(arr)
+                return result.push(arr)
             })
             setDataExport(result)
             done()
         }
     }
+    const handleImporCSV = (event) => {
+        // let files = event.target.files[0]
+        // console.log('>> check file upload', files)
+        if (event.target && event.target.files && event.target.files[0]) {
+            let file = event.target.files[0];
+            if (file.type !== "text/csv") {
+                toast.error("Only accept csv files...")
+                return
+            }
+            Papa.parse(file, {
+                complete: function (results) {
+                    let rawCSV = results.data;
+                    if (rawCSV.length > 0) {
+                        if (rawCSV[0] && rawCSV[0].length === 3) {
+                            if (rawCSV[0][0] !== "email"
+                                || rawCSV[0][1] !== "first_name"
+                                || rawCSV[0][2] !== "last_name"
+
+                            ) {
+                                toast.error("Wrong format Header CSV files")
+                            } else {
+                                console.log(rawCSV)
+                                let result = [];
+                                rawCSV.map((item, index) => {
+                                    if (index > 0 && item.length === 3) {
+                                        let obj = {};
+                                        obj.email = item[0];
+                                        obj.first_name = item[1];
+                                        obj.last_name = item[2];
+                                        result.push(obj)
+                                    }
+                                })
+                                setListUsers(result)
+                            }
+                        } else {
+                            toast.error("Wrong format csv file")
+                        }
+                    } else {
+                        toast.error("Not found data on CSV file!")
+                    }
+                }
+            })
+        }
+    }
+
+
     return (
 
         <>
@@ -135,17 +180,21 @@ const TableUsers = (props) => {
                 <div className="group-btns">
 
                     <label htmlFor="test" className="btn btn-warning " >
-                        <i class="fa-solid fa-file-import text-white  "></i>Import
+                        <i className="fa-solid fa-file-import text-white  "></i>Import
                     </label>
-                    <input id="test" type="file" hidden />
+                    <input id="test" type="file" hidden
+                        onChange={(event) => handleImporCSV(event)}
+                    />
                     <CSVLink
-                        data={dataExport}
+
                         filename={"users.csv"}
                         className="btn btn-primary"
+                        data={dataExport}
                         asyncOnClick={true}
                         onClick={getUserExport}
+                        target="_blank"
                     >
-                        <i class="fa-solid fa-file-arrow-down "></i>Export
+                        <i className="fa-solid fa-file-arrow-down "></i>Export
                     </CSVLink>
                 </div>
 
@@ -162,13 +211,13 @@ const TableUsers = (props) => {
                     <tr>
                         <th className="sort-header">Id
                             <span >
-                                <i class="fa-solid fa-arrow-down-long"
+                                <i className="fa-solid fa-arrow-down-long"
 
                                     onClick={() => handleSort('desc', "id")}
                                 >
 
                                 </i>
-                                <i class="fa-solid fa-arrow-up-long"
+                                <i className="fa-solid fa-arrow-up-long"
                                     onClick={() => handleSort('asc', "id")}
 
                                 ></i>
@@ -177,13 +226,13 @@ const TableUsers = (props) => {
                         <th>Email </th>
                         <th className="sort-header">First Name
                             <span>
-                                <i class="fa-solid fa-arrow-down-long"
+                                <i className="fa-solid fa-arrow-down-long"
 
                                     onClick={() => handleSort('desc', "first_name")}
                                 >
 
                                 </i>
-                                <i class="fa-solid fa-arrow-up-long"
+                                <i className="fa-solid fa-arrow-up-long"
                                     onClick={() => handleSort('asc', "first_name")}
 
                                 ></i>
