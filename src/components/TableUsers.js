@@ -6,10 +6,10 @@ import ModaAddlUser from './ModalAddUser';
 import ModalEditUser from "./ModalEditUser";
 import ModalConfirm from "./ModalConfirm";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import _, { set } from "lodash"
+import _ from "lodash"
 import "./TableUsers.scss"
 import { debounce } from "lodash"
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 import Papa from "papaparse";
 import { toast } from 'react-toastify';
 
@@ -120,7 +120,7 @@ const TableUsers = (props) => {
                 arr[1] = item.email;
                 arr[2] = item.first_name;
                 arr[3] = item.last_name;
-                return result.push(arr)
+                result.push(arr)
             })
             setDataExport(result)
             done()
@@ -159,6 +159,7 @@ const TableUsers = (props) => {
                                     }
                                 })
                                 setListUsers(result)
+                                console.log("check upload csv", result)
                             }
                         } else {
                             toast.error("Wrong format csv file")
@@ -192,7 +193,6 @@ const TableUsers = (props) => {
                         data={dataExport}
                         asyncOnClick={true}
                         onClick={getUserExport}
-                        target="_blank"
                     >
                         <i className="fa-solid fa-file-arrow-down "></i>Export
                     </CSVLink>

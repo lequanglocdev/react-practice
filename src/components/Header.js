@@ -3,12 +3,14 @@ import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import Container from 'react-bootstrap/Container'
 import Images from "../assets/images/logo192.png"
+import { useLocation, NavLink } from "react-router-dom"
 const Header = (props) => {
+    const location = useLocation();
     return (
         <>
             <Navbar bg="light" expand="lg">
                 <Container>
-                    <Navbar.Brand href="#home">
+                    <Navbar.Brand href="/">
                         <img
                             src={Images}
                             width="30"
@@ -16,13 +18,16 @@ const Header = (props) => {
                             className="d-inline-block align-top"
                             alt="Logo reactJS"
                         />
-                        ReactJS</Navbar.Brand>
+                        ReactJS
+                    </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto" activeKey={"/users"}>
-                            <Nav.Link href="#home">Home</Nav.Link>
-                            <Nav.Link href="/users">Manager Users</Nav.Link>
-                            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+                        <Nav className="me-auto">
+                            <NavLink to="/" className="nav-link">Home</NavLink>
+                            <NavLink to="/users" className="nav-link">Manager Users</NavLink>
+                        </Nav>
+                        <Nav>
+                            <NavDropdown title="Setting" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/login">Login</NavDropdown.Item>
                                 <NavDropdown.Item href="/logout">
                                     Logout
