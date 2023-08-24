@@ -176,9 +176,9 @@ const TableUsers = (props) => {
     return (
 
         <>
-            <div className='my-3 add-new'>
+            <div className='my-3 add-new d-sm-flex'>
                 <span ><h3>List Users</h3></span>
-                <div className="group-btns">
+                <div className="group-btns mt-sm-0 mt-2">
 
                     <label htmlFor="test" className="btn btn-warning " >
                         <i className="fa-solid fa-file-import text-white  "></i>Import
@@ -199,87 +199,90 @@ const TableUsers = (props) => {
                 </div>
 
             </div>
-            <div className="col-4 my-3">
+            <div className="col-12 col-sm-4  my-3">
                 <input
                     className='form-control'
                     placeholder="Search"
                     onChange={(event) => handleInput(event)}
                 />
             </div>
-            <Table striped bordered hover>
-                <thead >
-                    <tr>
-                        <th className="sort-header">Id
-                            <span >
-                                <i className="fa-solid fa-arrow-down-long"
+            <div className="customize-table">
+                <Table striped bordered hover>
+                    <thead >
+                        <tr>
+                            <th className="sort-header">Id
+                                <span >
+                                    <i className="fa-solid fa-arrow-down-long"
 
-                                    onClick={() => handleSort('desc', "id")}
-                                >
+                                        onClick={() => handleSort('desc', "id")}
+                                    >
 
-                                </i>
-                                <i className="fa-solid fa-arrow-up-long"
-                                    onClick={() => handleSort('asc', "id")}
+                                    </i>
+                                    <i className="fa-solid fa-arrow-up-long"
+                                        onClick={() => handleSort('asc', "id")}
 
-                                ></i>
-                            </span>
-                        </th>
-                        <th>Email </th>
-                        <th className="sort-header">First Name
-                            <span>
-                                <i className="fa-solid fa-arrow-down-long"
+                                    ></i>
+                                </span>
+                            </th>
+                            <th>Email </th>
+                            <th className="sort-header">First Name
+                                <span>
+                                    <i className="fa-solid fa-arrow-down-long"
 
-                                    onClick={() => handleSort('desc', "first_name")}
-                                >
+                                        onClick={() => handleSort('desc', "first_name")}
+                                    >
 
-                                </i>
-                                <i className="fa-solid fa-arrow-up-long"
-                                    onClick={() => handleSort('asc', "first_name")}
+                                    </i>
+                                    <i className="fa-solid fa-arrow-up-long"
+                                        onClick={() => handleSort('asc', "first_name")}
 
-                                ></i>
-                            </span>
-                        </th>
-                        <th>Last Name</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
+                                    ></i>
+                                </span>
+                            </th>
+                            <th>Last Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                    {listUsers && listUsers.length > 0 &&
+                        {listUsers && listUsers.length > 0 &&
 
-                        listUsers.map((item, index) => {
-                            return (
+                            listUsers.map((item, index) => {
+                                return (
 
-                                <tr key={`users-${index}`}>
-                                    <td>{item.id}</td>
-                                    <td>{item.email}</td>
-                                    <td>{item.first_name}</td>
-                                    <td>{item.last_name}</td>
-                                    <td>
-                                        <button
-                                            className='btn btn-success'
-                                            onClick={() => setShowAddModal(true)}
-                                        ><i className="fa-solid fa-circle-plus mx-1"></i>Add
-                                        </button>
+                                    <tr key={`users-${index}`}>
+                                        <td>{item.id}</td>
+                                        <td>{item.email}</td>
+                                        <td>{item.first_name}</td>
+                                        <td>{item.last_name}</td>
+                                        <td>
+                                            <button
+                                                className='btn btn-success'
+                                                onClick={() => setShowAddModal(true)}
+                                            ><i className="fa-solid fa-circle-plus mx-1"></i>Add
+                                            </button>
 
-                                        <button
-                                            className="btn btn-warning mx-3"
-                                            onClick={() => handleEditUsers(item)}
-                                        ><i className="fa-solid fa-pen mx-1 text-white"></i>Edit
-                                        </button>
+                                            <button
+                                                className="btn btn-warning mx-3"
+                                                onClick={() => handleEditUsers(item)}
+                                            ><i className="fa-solid fa-pen mx-1 text-white"></i>Edit
+                                            </button>
 
-                                        <button
-                                            className="btn btn-danger"
-                                            onClick={() => handleDeleteUser(item)}
-                                        ><i className="fa-solid fa-trash mx-1"></i>Delete</button>
-                                    </td>
-                                </tr>
-                            )
-                        })
+                                            <button
+                                                className="btn btn-danger"
+                                                onClick={() => handleDeleteUser(item)}
+                                            ><i className="fa-solid fa-trash mx-1"></i>Delete</button>
+                                        </td>
+                                    </tr>
+                                )
+                            })
 
-                    }
+                        }
 
-                </tbody>
-            </Table>
+                    </tbody>
+                </Table>
+            </div>
+
             <ModaAddlUser />
             <ModaAddlUser
                 show={ShowAddModal}
