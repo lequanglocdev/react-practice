@@ -1,16 +1,15 @@
-import { Routes, Route } from "react-router-dom";
 
 import React from 'react'
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext"
+import { Routes, Route } from 'react-router-dom';
 import { Alert } from "react-bootstrap";
+import { useSelector } from "react-redux";
 const PrivateRoutes = (props) => {
-    const { user } = useContext(UserContext)
+    const user = useSelector(state => state.user.acount)
 
     if (user && !user.auth) {
         return <>
 
-            <Alert variant="danger" >
+            <Alert variant="danger" className='mt-3'>
                 <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
                 <p>
                     You don't have permisson to acess this route
